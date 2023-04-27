@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.cert.*;
 import java.util.Collections;
@@ -24,67 +25,96 @@ public class App {
         try {
             BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
-            System.out.println("Hello World!");
-
-            X509CertSelector selector = new X509CertSelector();
-            // selector.setKeyUsage(X509Ke);
-            // X509Certificate cert = selector.getCertificate();
-
             // Read Windows truststore
             KeyStore ks = KeyStore.getInstance("Windows-MY");
             ks.load(null, null);
 
-            Enumeration<String> aliases = ks.aliases();
+            Hashtable<Integer, String> certDictionary = listCerts(ks);
 
-            System.out.println("Certs:");
-
-            Hashtable<Integer, String> certDictionary = new Hashtable<Integer, String>();
-
-            int i = 0;
-            for (String alias : Collections.list(aliases)) {
-                Certificate cert = ks.getCertificate(alias);
-                if (cert.getType() == "X.509") {
-                    System.out.println(i + " = " + alias);
-
-                    // ks.getKey(alias, null);
-                    certDictionary.put(i++, alias);
-
-                }
-
-                // System.out.println(alias);
-                // System.out.println(cert.getType());
-            }
-            // System.out.println("Choose a certificate");
-            // String selected = console.readLine();
-
-            // int intSelected = Integer.parseInt(selected);
-            int intSelected = 4;
-
-            String selectedCertAlias = certDictionary.get(intSelected);
-
+            String selectedCertAlias = selectACert(certDictionary);
             System.out.println("Selected cert = " + selectedCertAlias.toString());
 
             System.out.println("Enter data to hash");
             // String stringPayload = console.readLine();
             String stringPayload = "test data";
 
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            digest.update(stringPayload.getBytes());
-
-            Signature signature = Signature.getInstance("SHA256withRSA");
-            PrivateKey pk = (PrivateKey) ks.getKey(selectedCertAlias, null);
-            signature.initSign(pk);
-            signature.update(digest.digest(), i, intSelected);
-
-            byte[] signedData = signature.sign();
-
+            byte[] signedData = signData(stringPayload, ks, selectedCertAlias);
             System.out.println("Singed = " + signedData);
 
-            System.out.println("Done!");
+            boolean verifiedPublic = verifyData(stringPayload, signedData, ks, selectedCertAlias);
+            System.out.println("Valid = " + verifiedPublic);
 
-            
+            System.out.println("Done!");
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    private static boolean verifyData(String stringPayload, byte[] signedData, KeyStore ks, String selectedCertAlias)
+            throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(stringPayload.getBytes());
+        byte[] data = digest.digest();
+
+        Signature signature = Signature.getInstance("SHA256withRSA");
+        PublicKey pk = ks.getCertificate(selectedCertAlias).getPublicKey();
+        signature.initVerify(pk);
+        signature.update(data);
+        signature.verify(signedData);
+
+        boolean valid = signature.verify(signedData);
+
+        return valid;
+    }
+
+    private static byte[] signData(String stringPayload, KeyStore ks, String selectedCertAlias) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(stringPayload.getBytes());
+        byte[] data = digest.digest();
+
+//         DigestAlgorithmIdentifierFinder hashAlgorithmFinder = new DefaultDigestAlgorithmIdentifierFinder();
+// AlgorithmIdentifier hashingAlgorithmIdentifier = hashAlgorithmFinder.find("SHA-256");
+// DigestInfo digestInfo = new DigestInfo(hashingAlgorithmIdentifier, messageHash);
+// byte[] hashToEncrypt = digestInfo.getEncoded();
+
+        Signature signature = Signature.getInstance("SHA256withRSA");
+        PrivateKey pk = (PrivateKey) ks.getKey(selectedCertAlias, null);
+        signature.initSign(pk);
+        signature.update(data);
+
+        byte[] signedData = signature.sign();
+
+        return signedData;
+    }
+
+    private static String selectACert(Hashtable<Integer, String> certDictionary) {
+        // System.out.println("Choose a certificate");
+        // String selected = console.readLine();
+
+        // int intSelected = Integer.parseInt(selected);
+        int intSelected = 4;
+
+        String selectedCertAlias = certDictionary.get(intSelected);
+
+        return selectedCertAlias;
+    }
+
+    public static Hashtable<Integer, String> listCerts(KeyStore ks) throws Exception {
+        Hashtable<Integer, String> certDictionary = new Hashtable<Integer, String>();
+
+        Enumeration<String> aliases = ks.aliases();
+        System.out.println("Certs:");
+
+        int i = 0;
+        for (String alias : Collections.list(aliases)) {
+            Certificate cert = ks.getCertificate(alias);
+            if (cert.getType() == "X.509") {
+                System.out.println(i + " = " + alias);
+
+                certDictionary.put(i++, alias);
+            }
+        }
+
+        return certDictionary;
     }
 }
