@@ -34,8 +34,8 @@ public class PdfSignature {
         cvs.setImageFile(bgImage);
 
         NotarySignatureOveride nso = new NotarySignatureOveride();
-        nso.Name = "Gary";
-        nso.OnBehalfOf = "John Doe";
+        nso.Name = "Gary's CAC as the Noatary";
+        nso.OnBehalfOf = "John F. Doe #123324324";
         nso.Reason = "Gary Notarized This";
 
         cvs.signPDF(inputFile, signedFile, humanRect, null, "Gary Was Here", nso);

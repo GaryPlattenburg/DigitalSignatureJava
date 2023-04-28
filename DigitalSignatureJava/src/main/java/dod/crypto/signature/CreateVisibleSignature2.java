@@ -435,9 +435,9 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
             // show background image
             // save and restore graphics if the image is too large and needs to be scaled
             cs.saveGraphicsState();
-            cs.transform(Matrix.getScaleInstance(0.50f, 0.50f));
+            // cs.transform(Matrix.getScaleInstance(0.50f, 0.50f));
             PDImageXObject img = PDImageXObject.createFromFileByExtension(imageFile, doc);
-            cs.drawImage(img, 300, 0);
+            cs.drawImage(img, 0, 0);
             cs.restoreGraphicsState();
         }
 
