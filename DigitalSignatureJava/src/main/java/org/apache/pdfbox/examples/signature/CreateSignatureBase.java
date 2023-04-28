@@ -27,9 +27,13 @@
  import java.security.cert.Certificate;
  import java.security.cert.CertificateException;
  import java.security.cert.X509Certificate;
- import java.util.Arrays;
- import java.util.Enumeration;
- import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureInterface;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureInterface;
  import org.bouncycastle.cert.jcajce.JcaCertStore;
  import org.bouncycastle.cms.CMSException;
  import org.bouncycastle.cms.CMSSignedData;
@@ -60,12 +64,26 @@
       * @throws IOException if no certificate could be found
       */
      public CreateSignatureBase(KeyStore keystore, char[] pin)
+             throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException,
+             CertificateException {
+         this(keystore, pin, null);
+     }
+
+     public CreateSignatureBase(KeyStore keystore, char[] pin, String aliasIn)
              throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException, CertificateException
      {
          // grabs the first alias from the keystore and get the private key. An
          // alternative method or constructor could be used for setting a specific
          // alias that should be used.
-         Enumeration<String> aliases = keystore.aliases();
+         Enumeration<String> aliases;
+         if (aliasIn == null) {
+             aliases = keystore.aliases();
+         } else {
+             List<String> list = new ArrayList<String>();
+             list.add(aliasIn);
+
+             aliases = Collections.enumeration(list);
+         }
          String alias;
          Certificate cert = null;
          while (cert == null && aliases.hasMoreElements())

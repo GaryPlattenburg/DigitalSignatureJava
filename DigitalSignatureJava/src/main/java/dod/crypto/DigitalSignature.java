@@ -18,15 +18,12 @@ public class DigitalSignature {
         // Read Windows truststore
         KeyStore ks = KeyStore.getInstance("Windows-MY");
         ks.load(null, null);
-
-        Hashtable<Integer, String> certDictionary = listCerts(ks);
-
-        String selectedCertAlias = selectACert(certDictionary);
-        System.out.println("Selected cert = " + selectedCertAlias.toString());
+      
+        String selectedCertAlias = SelectACert(ks, console);
 
         System.out.println("Enter data to hash");
-        String stringPayload = console.readLine();
-        // String stringPayload = "test data";
+        // String stringPayload = console.readLine();
+        String stringPayload = "test data";
 
         byte[] signedData = signData(stringPayload, ks, selectedCertAlias);
         String encodeSignedData = Hex.getString(signedData);
@@ -66,14 +63,17 @@ public class DigitalSignature {
         return signedData;
     }
 
-    private static String selectACert(Hashtable<Integer, String> certDictionary) {
-        // System.out.println("Choose a certificate");
-        // String selected = console.readLine();
+    public String SelectACert(KeyStore ks, BufferedReader console) throws Exception {
+        Hashtable<Integer, String> certDictionary = listCerts(ks);
 
-        // int intSelected = Integer.parseInt(selected);
-        int intSelected = 4;
+        System.out.println("Choose a certificate");
+        String selected = console.readLine();
+
+        int intSelected = Integer.parseInt(selected);
+        // int intSelected = 4;
 
         String selectedCertAlias = certDictionary.get(intSelected);
+        System.out.println("Selected cert = " + selectedCertAlias);
 
         return selectedCertAlias;
     }

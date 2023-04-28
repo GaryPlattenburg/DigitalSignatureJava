@@ -94,10 +94,17 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
      * @throws CertificateException if the certificate is not valid as signing time
      * @throws IOException if no certificate could be found
      */
+
     public CreateVisibleSignature2(KeyStore keystore, char[] pin)
+            throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException,
+            CertificateException {
+        super(keystore, pin);
+    }
+    
+    public CreateVisibleSignature2(KeyStore keystore, char[] pin, String aliasIn)
             throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException, CertificateException
     {
-        super(keystore, pin);
+        super(keystore, pin, aliasIn);
     }
 
     public File getImageFile()

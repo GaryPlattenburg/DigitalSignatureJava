@@ -10,21 +10,17 @@ public class App {
         try {
             BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
-            DigitalSignature ds = new DigitalSignature();
-           ds.DigitalSignatureTests(console);
+            // DigitalSignature ds = new DigitalSignature();
+            // ds.DigitalSignatureTests(console);
 
-           PdfSignature ps = new PdfSignature();
-           ps.PdfTests(console);
+            PdfSignature ps = new PdfSignature();
+            ps.PdfTests(console);
 
             System.out.println("Done!");
         } catch (Exception e) {
             System.out.println(e);
+            e.printStackTrace();
         }
     }
 
-    
-
-    
-
-    
 }
