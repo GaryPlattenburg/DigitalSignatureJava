@@ -65,6 +65,8 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 
+import dod.crypto.NotarySignatureOveride;
+
 /**
  * This is a second example for visual signing a pdf. It doesn't use the "design pattern" influenced
  * PDVisibleSignDesigner, and doesn't create its complex multilevel forms described in the Adobe
@@ -81,6 +83,8 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
     private SignatureOptions signatureOptions;
     private boolean lateExternalSigning = false;
     private File imageFile = null;
+
+    private NotarySignatureOveride notaryData;
 
     /**
      * Initialize the signature creator with a keystore (pkcs12) and pin that
@@ -145,7 +149,7 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
      */
     public void signPDF(File inputFile, File signedFile, Rectangle2D humanRect, String tsaUrl) throws IOException
     {
-        this.signPDF(inputFile, signedFile, humanRect, tsaUrl, null);
+        this.signPDF(inputFile, signedFile, humanRect, tsaUrl, null, null);
     }
 
     /**
@@ -158,8 +162,10 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
      * @param signatureFieldName optional name of an existing (unsigned) signature field
      * @throws IOException
      */
-    public void signPDF(File inputFile, File signedFile, Rectangle2D humanRect, String tsaUrl, String signatureFieldName) throws IOException
+    public void signPDF(File inputFile, File signedFile, Rectangle2D humanRect, String tsaUrl,
+            String signatureFieldName, NotarySignatureOveride nso) throws IOException
     {
+        notaryData = nso;
         if (inputFile == null || !inputFile.exists())
         {
             throw new IOException("Document for signing does not exist");
@@ -420,7 +426,7 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
         }
 
         // show background (just for debugging, to see the rect size + position)
-        cs.setNonStrokingColor(Color.yellow);
+        cs.setNonStrokingColor(Color.gray);
         cs.addRect(-5000, -5000, 10000, 10000);
         cs.fill();
 
@@ -429,9 +435,9 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
             // show background image
             // save and restore graphics if the image is too large and needs to be scaled
             cs.saveGraphicsState();
-            cs.transform(Matrix.getScaleInstance(0.25f, 0.25f));
+            cs.transform(Matrix.getScaleInstance(0.50f, 0.50f));
             PDImageXObject img = PDImageXObject.createFromFileByExtension(imageFile, doc);
-            cs.drawImage(img, 0, 0);
+            cs.drawImage(img, 300, 0);
             cs.restoreGraphicsState();
         }
 
@@ -456,7 +462,26 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
         String date = signature.getSignDate().getTime().toString();
         String reason = signature.getReason();
 
-        cs.showText("Signer: " + name);
+        String signedBy = name;
+        String onBehalfOf = "";
+        if(notaryData!=null){
+            if(notaryData.Name!=null){
+                name = notaryData.Name;
+            }
+
+            if(notaryData.Reason!=null){
+                reason = notaryData.Reason;
+            }
+
+            if(notaryData.OnBehalfOf!=null){
+                onBehalfOf = notaryData.OnBehalfOf;
+            }
+        }
+        cs.showText("Signed By: " + signedBy);
+        cs.newLine();
+        cs.showText("On behalf of: " + onBehalfOf);
+        cs.newLine();
+        cs.showText("Notary Data:" + name);
         cs.newLine();
         cs.showText(date);
         cs.newLine();
@@ -577,7 +602,7 @@ public class CreateVisibleSignature2 extends CreateSignatureBase
         // regardless of page rotation.
         Rectangle2D humanRect = new Rectangle2D.Float(100, 200, 150, 50);
 
-        signing.signPDF(documentFile, signedDocumentFile, humanRect, tsaUrl, "Signature1");
+        signing.signPDF(documentFile, signedDocumentFile, humanRect, tsaUrl, "Signature1", null);
     }
 
     /**

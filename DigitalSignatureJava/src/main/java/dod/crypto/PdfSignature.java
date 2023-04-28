@@ -20,7 +20,7 @@ public class PdfSignature {
         File signedFile = new File("samples\\out\\NascarSample_signed.pdf");
 
         //The visibility of the signature can be further customized, but this is a basic one
-        Rectangle2D humanRect = new Rectangle2D.Float(100, 100, 200, 100);
+        Rectangle2D humanRect = new Rectangle2D.Float(100, 100, 300, 100);
 
         //This is some custom code that reads the cert store and list them to the concole
         //Then the user is prompted to select a specific one
@@ -29,6 +29,15 @@ public class PdfSignature {
 
         //Reads in the PDF and adds a digital signature and saves it to the output
         CreateVisibleSignature2 cvs = new CreateVisibleSignature2(ks, null, alias);
-        cvs.signPDF(inputFile, signedFile, humanRect, null, "Gary Was Here");
+
+        File bgImage = new File("samples\\in\\NavsupLogo2.gif");
+        cvs.setImageFile(bgImage);
+
+        NotarySignatureOveride nso = new NotarySignatureOveride();
+        nso.Name = "Gary";
+        nso.OnBehalfOf = "John Doe";
+        nso.Reason = "Gary Notarized This";
+
+        cvs.signPDF(inputFile, signedFile, humanRect, null, "Gary Was Here", nso);
     }
 }

@@ -67,10 +67,10 @@ public class DigitalSignature {
         Hashtable<Integer, String> certDictionary = listCerts(ks);
 
         System.out.println("Choose a certificate");
-        String selected = console.readLine();
-
-        int intSelected = Integer.parseInt(selected);
-        // int intSelected = 4;
+        
+        // String selected = console.readLine();
+        // int intSelected = Integer.parseInt(selected);
+        int intSelected = 4;
 
         String selectedCertAlias = certDictionary.get(intSelected);
         System.out.println("Selected cert = " + selectedCertAlias);
