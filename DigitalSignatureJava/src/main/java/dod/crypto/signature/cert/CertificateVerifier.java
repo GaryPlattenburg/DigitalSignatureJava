@@ -17,7 +17,7 @@
  * under the License.
  */
 
- package org.apache.pdfbox.examples.signature.cert;
+ package dod.crypto.signature.cert;
 
  import java.io.IOException;
  import java.io.InputStream;
@@ -46,7 +46,6 @@
  import java.util.Set;
  import org.apache.commons.logging.Log;
  import org.apache.commons.logging.LogFactory;
- import org.apache.pdfbox.examples.signature.SigUtils;
  import org.apache.pdfbox.io.IOUtils;
  import org.apache.pdfbox.pdmodel.encryption.SecurityProvider;
  import org.bouncycastle.asn1.ASN1Encodable;
@@ -64,6 +63,8 @@
  import org.bouncycastle.cert.ocsp.BasicOCSPResp;
  import org.bouncycastle.cert.ocsp.OCSPException;
  import org.bouncycastle.cert.ocsp.OCSPResp;
+
+import dod.crypto.signature.SigUtils;
  
  /**
   * Copied from Apache CXF 2.4.9, initial version:

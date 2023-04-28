@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- package org.apache.pdfbox.examples.signature;
+ package dod.crypto.signature;
 
  import java.io.IOException;
  import java.io.InputStream;
@@ -39,9 +39,6 @@
  import org.apache.pdfbox.cos.COSDictionary;
  import org.apache.pdfbox.cos.COSName;
  import org.apache.pdfbox.cos.COSObjectKey;
- import org.apache.pdfbox.examples.signature.cert.CertificateVerificationException;
- import org.apache.pdfbox.examples.signature.cert.CertificateVerifier;
- import org.apache.pdfbox.examples.util.ConnectedInputStream;
  import org.apache.pdfbox.pdmodel.PDDocument;
  import org.apache.pdfbox.pdmodel.encryption.SecurityProvider;
  import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
@@ -61,6 +58,10 @@
  import org.bouncycastle.tsp.TSPException;
  import org.bouncycastle.tsp.TimeStampToken;
  import org.bouncycastle.util.Store;
+
+import dod.crypto.signature.cert.CertificateVerificationException;
+import dod.crypto.signature.cert.CertificateVerifier;
+import dod.crypto.util.ConnectedInputStream;
  
  /**
   * Utility class for the signature / timestamp examples.

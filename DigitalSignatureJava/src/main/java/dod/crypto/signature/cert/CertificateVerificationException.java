@@ -17,7 +17,7 @@
  * under the License.
  */
 
- package org.apache.pdfbox.examples.signature.cert;
+ package dod.crypto.signature.cert;
 
  /**
   * Copied from Apache CXF 2.4.9, initial version:
