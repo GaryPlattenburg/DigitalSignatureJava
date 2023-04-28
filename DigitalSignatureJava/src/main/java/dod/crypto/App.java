@@ -14,7 +14,7 @@ public class App {
             // ds.DigitalSignatureTests(console);
 
             PdfSignature ps = new PdfSignature();
-            ps.PdfTests(console);
+            ps.MakePdfDigitalSignature(console);
 
             System.out.println("Done!");
         } catch (Exception e) {
