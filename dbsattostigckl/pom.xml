@@ -26,6 +26,13 @@
     <version>2.0.28</version>
 </dependency>
 
+<dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcmail-jdk15on</artifactId>
+      <version>1.70</version>
+      <optional>true</optional>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

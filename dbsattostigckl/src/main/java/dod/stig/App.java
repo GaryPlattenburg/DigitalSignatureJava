@@ -2,24 +2,16 @@
 package dod.stig;
 
 import java.io.BufferedReader;
-import java.io.Console;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.security.KeyStore;
-import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.cert.*;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Base64.Encoder;
+
 
 import org.apache.pdfbox.util.Hex;;
 
@@ -33,31 +25,40 @@ public class App {
         try {
             BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
-            // Read Windows truststore
-            KeyStore ks = KeyStore.getInstance("Windows-MY");
-            ks.load(null, null);
-
-            Hashtable<Integer, String> certDictionary = listCerts(ks);
-
-            String selectedCertAlias = selectACert(certDictionary);
-            System.out.println("Selected cert = " + selectedCertAlias.toString());
-
-            System.out.println("Enter data to hash");
-            String stringPayload = console.readLine();
-            // String stringPayload = "test data";
-
-            byte[] signedData = signData(stringPayload, ks, selectedCertAlias);
-            String encodeSignedData = Hex.getString(signedData);
-            System.out.println("Signed = " + signedData.toString());
-
-            byte[] decodedSignedData = Hex.decodeHex(encodeSignedData);
-            boolean verifiedPublic = verifyData(stringPayload, decodedSignedData, ks, selectedCertAlias);
-            System.out.println("Valid = " + verifiedPublic);
+           digitalSignatureTests(console);
+           pdfTests(console);
 
             System.out.println("Done!");
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    private static void pdfTests(BufferedReader console) throws Exception {
+        
+    }
+
+    private static void digitalSignatureTests(BufferedReader console) throws Exception {
+         // Read Windows truststore
+         KeyStore ks = KeyStore.getInstance("Windows-MY");
+         ks.load(null, null);
+
+         Hashtable<Integer, String> certDictionary = listCerts(ks);
+
+         String selectedCertAlias = selectACert(certDictionary);
+         System.out.println("Selected cert = " + selectedCertAlias.toString());
+
+         System.out.println("Enter data to hash");
+         String stringPayload = console.readLine();
+         // String stringPayload = "test data";
+
+         byte[] signedData = signData(stringPayload, ks, selectedCertAlias);
+         String encodeSignedData = Hex.getString(signedData);
+         System.out.println("Signed = " + signedData.toString());
+
+         byte[] decodedSignedData = Hex.decodeHex(encodeSignedData);
+         boolean verifiedPublic = verifyData(stringPayload, decodedSignedData, ks, selectedCertAlias);
+         System.out.println("Valid = " + verifiedPublic);
     }
 
     private static boolean verifyData(String stringPayload, byte[] signedData, KeyStore ks, String selectedCertAlias)
